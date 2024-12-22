@@ -2,13 +2,11 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'path/to/PHPMailer/src/Exception.php';
-require 'path/to/PHPMailer/src/PHPMailer.php';
-require 'path/to/PHPMailer/src/SMTP.php';
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    header('Content-Type: application/json');
-    $mail = new PHPMailer(true);
     $subject = $_POST['subject'];
     $body = $_POST['body'];
     $societyName = trim($_POST['societyName1']);
@@ -18,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $tableName = "society_" . preg_replace("/[^a-z0-9]/i", "_", strtolower($societyName));
+    $tableName = "society_" . preg_replace("/[^a-z0-9]/i", "", strtolower($societyName)); // Remove any non-alphanumeric characters from the society name
 
     $dbHost = 'localhost';
     $dbUser = 'root';
@@ -58,20 +56,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($email)) {
             $mail = new PHPMailer(true);
             try {
+                // Server settings
                 $mail->isSMTP();
-                $mail->Host = 'smtp.example.com';
+                $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
                 $mail->SMTPAuth = true;
-                $mail->Username = 'ompandeyit.69@gmail.com';
-                $mail->Password = '131205om';
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port = 587;
+                $mail->Username = 'ompandeyit.69@gmail.com'; // Your Gmail address
+                $mail->Password = 'stgl qdwz jbad zggn'; // Your Gmail password or app password
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                $mail->Port = 465;
 
-                $mail->setFrom('your_email@example.com', 'Your Name');
-                $mail->addAddress($email);
+                // Recipients
+                $mail->setFrom('ompandeyit.69@gmail.com', 'om pandey'); // Your Gmail address and name
+                $mail->addAddress($email); // Add a recipient
 
+                // Content
                 $mail->isHTML(true);
                 $mail->Subject = $subject;
-                $mail->Body    = $processedBody;
+                $mail->Body = $processedBody;
 
                 $mail->send();
                 $successCount++;
