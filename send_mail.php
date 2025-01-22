@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $tableName = "society_" . preg_replace("/[^a-z0-9]/i", "", strtolower($societyName)); // Remove any non-alphanumeric characters from the society name
+    $tableName = "society_" . preg_replace("/[^a-z0-9]/i", "_", strtolower($societyName)); // Remove any non-alphanumeric characters from the society name
 
     $dbHost = 'localhost';
     $dbUser = 'root';
@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$result || $result->num_rows === 0) {
         echo json_encode(['success' => false, 'message' => 'No data found in the specified table.']);
+        echo json_encode( ['success' => false, 'message' => 'No data found in the specified table.'.' '.$tableName]);
         exit;
     }
 
@@ -52,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $processedBody = str_replace("{{$placeholder}}", $replacement, $processedBody);
         }
 
-        $email = $row['email'] ?? '';
+        $email = $row['email_id'] ?? '';
         if (!empty($email)) {
             $mail = new PHPMailer(true);
             try {
@@ -62,8 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $mail->SMTPAuth = true;
                 $mail->Username = 'ompandeyit.69@gmail.com'; // Your Gmail address
                 $mail->Password = 'stgl qdwz jbad zggn'; // Your Gmail password or app password
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-                $mail->Port = 465;
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port= 587;
 
                 // Recipients
                 $mail->setFrom('ompandeyit.69@gmail.com', 'om pandey'); // Your Gmail address and name
