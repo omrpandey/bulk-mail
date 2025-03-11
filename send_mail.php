@@ -16,8 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $tableName = "society_" . preg_replace("/[^a-z0-9]/i", "_", strtolower($societyName)); // Remove any non-alphanumeric characters from the society name
+    $tableName = "society_" . preg_replace("/[^a-z0-9]/i", "_", strtolower($societyName)); // Sanitize society name
 
+    // Database credentials
     $dbHost = 'localhost';
     $dbUser = 'root';
     $dbPass = '';
@@ -35,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$result || $result->num_rows === 0) {
         echo json_encode(['success' => false, 'message' => 'No data found in the specified table.']);
-        echo json_encode( ['success' => false, 'message' => 'No data found in the specified table.'.' '.$tableName]);
         exit;
     }
 
@@ -59,18 +59,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 // Server settings
                 $mail->isSMTP();
-                $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
+                $mail->Host = 'smtp.gmail.com';
                 $mail->SMTPAuth = true;
-                $mail->Username = 'ompandeyit.69@gmail.com'; // Your Gmail address
-                $mail->Password = 'stgl qdwz jbad zggn'; // Your Gmail password or app password
+                $mail->Username = 'ompandeyit.69@gmail.com';
+                $mail->Password = 'stgl qdwz jbad zggn';
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port= 587;
+                $mail->Port = 587;
 
                 // Recipients
-                $mail->setFrom('ompandeyit.69@gmail.com', 'om pandey'); // Your Gmail address and name
-                $mail->addAddress($email); // Add a recipient
+                $mail->setFrom('ompandeyit.69@gmail.com', 'Om Pandey');
+                $mail->addAddress($email);
 
-                // Content
+                // Attachments
+                if (!empty($_FILES['attachments']['name'][0])) {
+                    // Loop through each file
+                    for ($i = 0; $i < count($_FILES['attachments']['name']); $i++) {
+                        $filePath = $_FILES['attachments']['tmp_name'][$i];
+                        $fileName = $_FILES['attachments']['name'][$i];
+                        $fileType = mime_content_type($filePath); // Get the file type
+                        $fileSize = $_FILES['attachments']['size'][$i]; // Get the file size
+                
+                        // Validate file type and size
+                        $allowedTypes = ['image/jpeg', 'image/png', 'application/pdf', 'text/plain'];
+                        $maxFileSize = 5 * 1024 * 1024; // 5MB limit
+                
+                        if (!in_array($fileType, $allowedTypes)) {
+                            echo json_encode(['success' => false, 'message' => "Invalid file type: $fileName"]);
+                            exit;
+                        }
+                
+                        if ($fileSize > $maxFileSize) {
+                            echo json_encode(['success' => false, 'message' => "File too large: $fileName"]);
+                            exit;
+                        }
+                
+                        // Attach the file to the email
+                        $mail->addAttachment($filePath, $fileName);
+                    }
+                }
+                
+                // Email content
                 $mail->isHTML(true);
                 $mail->Subject = $subject;
                 $mail->Body = $processedBody;

@@ -77,6 +77,8 @@
         <input type="text" name="subject" required>
         <label>Body: *</label>
         <textarea name="body" id="emailBody" required></textarea>
+        <label>Attachments (multiple):</label>
+        <input type="file" name="attachments[]" multiple>
         <button type="submit">Send Email</button>
     </form>
     <div id="sendMailResponse"></div>
