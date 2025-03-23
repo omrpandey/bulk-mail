@@ -61,13 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $mail->isSMTP();
                 $mail->Host = 'smtp.gmail.com';
                 $mail->SMTPAuth = true;
-                $mail->Username = 'ompandeyit.69@gmail.com';
-                $mail->Password = 'stgl qdwz jbad zggn';
+                $mail->Username = 'veenatheveenagroup@gmail.com';
+                $mail->Password = 'yxir vtts njvd mihf';
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port = 587;
 
                 // Recipients
-                $mail->setFrom('ompandeyit.69@gmail.com', 'Om Pandey');
+                $mail->setFrom('veenatheveenagroup@gmail.com', 'The Veena Group');
                 $mail->addAddress($email);
 
                 // Attachments
